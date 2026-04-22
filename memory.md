@@ -21,3 +21,6 @@
 - Per-task busy state must be tracked with a `Set<id>` signal instead of a single `busy` boolean so toggling one task does not freeze the whole list.
 - `@ServiceConnection` plus a `@TestConfiguration` containing `PostgreSQLContainer` is the cleanest way to wire Testcontainers into a Spring Boot 3.5 test slice.
 - `ddl-auto: update` is unsafe for a portfolio app; keep Hibernate at `validate` and let Flyway own schema changes.
+- Bucket4j 8.x for Java 17+ ships under `com.bucket4j:bucket4j_jdk17-core`, not `bucket4j-core`; the classic `Bandwidth.classic(...).withRefill(...)` constructors were replaced by the lambda builder `Bucket.builder().addLimit(limit -> limit.capacity(n).refillIntervally(n, period))`.
+- After refactors, run `mvn spotless:apply` and `prettier --write` locally before pushing; CI runs the *check* variant and fails on any drift, including hand-crafted formatting that happens to look fine.
+- When writing a new repo from scratch, push from the correct working tree: `git -C <abs-path>` stops the shell from silently targeting the parent directory's git state.

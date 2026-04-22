@@ -9,7 +9,6 @@ module.exports = tseslint.config(
     files: ['**/*.ts'],
     extends: [eslint.configs.recommended, ...tseslint.configs.recommended],
     plugins: { '@angular-eslint': angular },
-    processor: angular.processInlineTemplates,
     rules: {
       '@angular-eslint/component-selector': [
         'error',
