@@ -1,0 +1,138 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+:root {
+  color-scheme: light;
+  --bg: #eef3ed;
+  --bg-strong: #f8fbf8;
+  --surface: rgba(255, 255, 255, 0.8);
+  --surface-strong: #ffffff;
+  --text: #102118;
+  --muted: #5d6d65;
+  --border: rgba(16, 31, 24, 0.1);
+  --accent: #146c43;
+  --accent-2: #1e8a5f;
+  --accent-strong: #0f5132;
+  --accent-soft: #e2f3e8;
+  --danger: #b5473b;
+  --shadow: 0 24px 70px rgba(17, 33, 24, 0.12);
+  --shadow-strong: 0 28px 80px rgba(17, 33, 24, 0.16);
+  --font-body: 'Manrope', sans-serif;
+  --font-display: 'Space Grotesk', sans-serif;
+  --ease-pop: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-soft: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  position: relative;
+  isolation: isolate;
+  font-family: var(--font-body);
+  color: var(--text);
+  background:
+    radial-gradient(circle at 16% 12%, rgba(255, 255, 255, 0.92), transparent 18%),
+    radial-gradient(circle at 84% 14%, rgba(198, 226, 209, 0.72), transparent 22%),
+    radial-gradient(circle at 52% 102%, rgba(20, 108, 67, 0.1), transparent 24%),
+    linear-gradient(180deg, var(--bg-strong) 0%, var(--bg) 48%, #e7ede8 100%);
+  overflow-x: hidden;
+}
+
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  inset: -20vmax;
+  pointer-events: none;
+  z-index: -1;
+}
+
+body::before {
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.48), transparent 32%),
+    radial-gradient(circle at 78% 18%, rgba(20, 108, 67, 0.14), transparent 24%),
+    radial-gradient(circle at 52% 84%, rgba(152, 193, 169, 0.2), transparent 28%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0));
+  filter: blur(8px);
+  animation: ambient-drift 22s var(--ease-soft) infinite alternate;
+}
+
+body::after {
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(16, 33, 24, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(16, 33, 24, 0.04) 1px, transparent 1px);
+  background-size: 84px 84px;
+  -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.28), transparent 78%);
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.28), transparent 78%);
+  opacity: 0.45;
+  animation: grid-drift 34s linear infinite;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+input,
+textarea {
+  color: inherit;
+}
+
+::selection {
+  background: rgba(20, 108, 67, 0.18);
+  color: var(--text);
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(16, 33, 24, 0.16);
+  border-radius: 999px;
+  border: 3px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(20, 108, 67, 0.14);
+}
+
+@keyframes ambient-drift {
+  0% {
+    transform: translate3d(-2%, -2%, 0) scale(1);
+  }
+
+  100% {
+    transform: translate3d(2%, 2%, 0) scale(1.04);
+  }
+}
+
+@keyframes grid-drift {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  100% {
+    transform: translate3d(0, 3.5%, 0);
+  }
+}
