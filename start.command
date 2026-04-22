@@ -12,6 +12,19 @@ if [[ -f "$SCRIPT_DIR/.env" ]]; then
   source "$SCRIPT_DIR/.env"
   set +a
 fi
+
+if [[ -z "${JAVA_HOME:-}" ]] || ! "$JAVA_HOME/bin/java" -version 2>&1 | grep -q "version \"21"; then
+  for candidate in \
+    /opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home \
+    /usr/local/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home \
+    /Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home; do
+    if [[ -x "$candidate/bin/java" ]]; then
+      export JAVA_HOME="$candidate"
+      export PATH="$JAVA_HOME/bin:$PATH"
+      break
+    fi
+  done
+fi
 BACKEND_PID_FILE="$STATE_DIR/backend.pid"
 FRONTEND_PID_FILE="$STATE_DIR/frontend.pid"
 
