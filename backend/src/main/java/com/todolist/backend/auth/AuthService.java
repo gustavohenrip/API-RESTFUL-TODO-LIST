@@ -10,12 +10,11 @@ import com.todolist.backend.common.exception.ForbiddenException;
 import com.todolist.backend.common.exception.UnauthorizedException;
 import com.todolist.backend.user.UserEntity;
 import com.todolist.backend.user.UserRepository;
+import java.time.Instant;
+import java.util.Locale;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.Instant;
-import java.util.Locale;
 
 @Service
 public class AuthService {
@@ -24,7 +23,8 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService) {
+    public AuthService(
+            UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
@@ -54,8 +54,10 @@ public class AuthService {
 
     @Transactional(readOnly = true)
     public AuthResponse login(LoginRequest request) {
-        UserEntity user = userRepository.findByUsername(normalizeUsername(request.username()))
-                .orElseThrow(() -> new UnauthorizedException("Invalid credentials"));
+        UserEntity user =
+                userRepository
+                        .findByUsername(normalizeUsername(request.username()))
+                        .orElseThrow(() -> new UnauthorizedException("Invalid credentials"));
 
         if (!user.isActive()) {
             throw new ForbiddenException("Account disabled");
@@ -78,14 +80,15 @@ public class AuthService {
                 user.getUpdatedAt(),
                 token,
                 "bearer",
-                expiresAt
-        );
+                expiresAt);
     }
 
     @Transactional(readOnly = true)
     public UserResponse currentUser(String username) {
-        return UserResponse.from(userRepository.findByUsername(normalizeUsername(username))
-                .orElseThrow(() -> new UnauthorizedException("User not found")));
+        return UserResponse.from(
+                userRepository
+                        .findByUsername(normalizeUsername(username))
+                        .orElseThrow(() -> new UnauthorizedException("User not found")));
     }
 
     private String normalizeUsername(String username) {

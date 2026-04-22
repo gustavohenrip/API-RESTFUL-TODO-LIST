@@ -8,13 +8,12 @@ import com.todolist.backend.task.dto.TaskResponse;
 import com.todolist.backend.task.dto.TaskUpdateRequest;
 import com.todolist.backend.user.UserEntity;
 import com.todolist.backend.user.UserRepository;
+import java.util.Locale;
+import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Locale;
-import java.util.UUID;
 
 @Service
 public class TaskService {
@@ -30,9 +29,11 @@ public class TaskService {
     @Transactional(readOnly = true)
     public Page<TaskResponse> listTasks(String username, Boolean completed, Pageable pageable) {
         UserEntity user = requireUser(username);
-        Page<TaskEntity> page = completed == null
-                ? taskRepository.findAllByOwnerId(user.getId(), pageable)
-                : taskRepository.findAllByOwnerIdAndCompleted(user.getId(), completed, pageable);
+        Page<TaskEntity> page =
+                completed == null
+                        ? taskRepository.findAllByOwnerId(user.getId(), pageable)
+                        : taskRepository.findAllByOwnerIdAndCompleted(
+                                user.getId(), completed, pageable);
         return page.map(TaskResponse::from);
     }
 
@@ -82,12 +83,14 @@ public class TaskService {
 
     private UserEntity requireUser(String username) {
         String normalizedUsername = normalizeUsername(username);
-        return userRepository.findByUsername(normalizedUsername)
+        return userRepository
+                .findByUsername(normalizedUsername)
                 .orElseThrow(() -> new UnauthorizedException("User not found"));
     }
 
     private TaskEntity requireTask(UUID userId, UUID taskId) {
-        return taskRepository.findByIdAndOwnerId(taskId, userId)
+        return taskRepository
+                .findByIdAndOwnerId(taskId, userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
     }
 

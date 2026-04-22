@@ -8,8 +8,7 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties(prefix = "app.cors")
 public class AppCorsProperties {
 
-    @NotBlank
-    private String allowedOrigins;
+    @NotBlank private String allowedOrigins;
 
     public String getAllowedOrigins() {
         return allowedOrigins;

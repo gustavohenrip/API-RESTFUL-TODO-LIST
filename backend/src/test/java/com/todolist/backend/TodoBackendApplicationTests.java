@@ -12,6 +12,5 @@ import org.springframework.test.context.ActiveProfiles;
 class TodoBackendApplicationTests {
 
     @Test
-    void contextLoads() {
-    }
+    void contextLoads() {}
 }

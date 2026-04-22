@@ -7,29 +7,26 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
+import java.time.Instant;
+import java.util.UUID;
 import org.hibernate.annotations.UuidGenerator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.Instant;
-import java.util.UUID;
-
 @Entity
-@Table(name = "todo_users", indexes = {
-        @Index(name = "idx_todo_users_username", columnList = "username"),
-        @Index(name = "idx_todo_users_email", columnList = "email")
-})
+@Table(
+        name = "todo_users",
+        indexes = {
+            @Index(name = "idx_todo_users_username", columnList = "username"),
+            @Index(name = "idx_todo_users_email", columnList = "email")
+        })
 @EntityListeners(AuditingEntityListener.class)
 public class UserEntity {
 
-    public UserEntity() {
-    }
+    public UserEntity() {}
 
-    @Id
-    @GeneratedValue
-    @UuidGenerator
-    private UUID id;
+    @Id @GeneratedValue @UuidGenerator private UUID id;
 
     @Column(nullable = false, unique = true, length = 32)
     private String username;

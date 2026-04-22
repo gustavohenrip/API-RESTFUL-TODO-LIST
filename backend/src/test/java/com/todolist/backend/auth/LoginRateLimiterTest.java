@@ -1,9 +1,9 @@
 package com.todolist.backend.auth;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.todolist.backend.config.RateLimitProperties;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class LoginRateLimiterTest {
 

@@ -5,11 +5,10 @@ import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 import io.github.bucket4j.ConsumptionProbe;
 import io.github.bucket4j.Refill;
-import org.springframework.stereotype.Component;
-
 import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import org.springframework.stereotype.Component;
 
 @Component
 public class LoginRateLimiter {
@@ -28,10 +27,11 @@ public class LoginRateLimiter {
 
     private Bucket newBucket(String key) {
         RateLimitProperties.Login login = properties.getLogin();
-        Bandwidth bandwidth = Bandwidth.classic(
-                login.getCapacity(),
-                Refill.intervally(login.getCapacity(), Duration.ofMinutes(login.getRefillMinutes()))
-        );
+        Bandwidth bandwidth =
+                Bandwidth.classic(
+                        login.getCapacity(),
+                        Refill.intervally(
+                                login.getCapacity(), Duration.ofMinutes(login.getRefillMinutes())));
         return Bucket.builder().addLimit(bandwidth).build();
     }
 }

@@ -7,18 +7,17 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.time.Instant;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
-import java.io.IOException;
-import java.time.Instant;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 @Component
 public class LoginRateLimitFilter extends OncePerRequestFilter {
@@ -35,31 +34,35 @@ public class LoginRateLimitFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        return !HttpMethod.POST.matches(request.getMethod()) || !LOGIN_PATH.equals(request.getRequestURI());
+        return !HttpMethod.POST.matches(request.getMethod())
+                || !LOGIN_PATH.equals(request.getRequestURI());
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+    protected void doFilterInternal(
+            HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
         String key = clientKey(request);
         ConsumptionProbe probe = limiter.tryConsume(key);
 
         if (!probe.isConsumed()) {
-            long retryAfterSeconds = TimeUnit.NANOSECONDS.toSeconds(probe.getNanosToWaitForRefill());
+            long retryAfterSeconds =
+                    TimeUnit.NANOSECONDS.toSeconds(probe.getNanosToWaitForRefill());
             if (retryAfterSeconds <= 0) {
                 retryAfterSeconds = 1;
             }
             response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.setHeader(HttpHeaders.RETRY_AFTER, Long.toString(retryAfterSeconds));
-            objectMapper.writeValue(response.getOutputStream(), new ApiErrorResponse(
-                    Instant.now(),
-                    HttpStatus.TOO_MANY_REQUESTS.value(),
-                    HttpStatus.TOO_MANY_REQUESTS.getReasonPhrase(),
-                    "Too many login attempts",
-                    request.getRequestURI(),
-                    List.of()
-            ));
+            objectMapper.writeValue(
+                    response.getOutputStream(),
+                    new ApiErrorResponse(
+                            Instant.now(),
+                            HttpStatus.TOO_MANY_REQUESTS.value(),
+                            HttpStatus.TOO_MANY_REQUESTS.getReasonPhrase(),
+                            "Too many login attempts",
+                            request.getRequestURI(),
+                            List.of()));
             return;
         }
 

@@ -4,6 +4,7 @@ import com.todolist.backend.task.dto.TaskCreateRequest;
 import com.todolist.backend.task.dto.TaskResponse;
 import com.todolist.backend.task.dto.TaskUpdateRequest;
 import jakarta.validation.Valid;
+import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -22,8 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.UUID;
-
 @RestController
 @RequestMapping("/api/tasks")
 public class TaskController {
@@ -38,22 +37,21 @@ public class TaskController {
     public Page<TaskResponse> list(
             @AuthenticationPrincipal Jwt jwt,
             @RequestParam(required = false) Boolean completed,
-            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC)
+                    Pageable pageable) {
         return taskService.listTasks(jwt.getSubject(), completed, pageable);
     }
 
     @GetMapping("/{taskId}")
-    public TaskResponse get(
-            @AuthenticationPrincipal Jwt jwt,
-            @PathVariable UUID taskId) {
+    public TaskResponse get(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID taskId) {
         return taskService.getTask(jwt.getSubject(), taskId);
     }
 
     @PostMapping
     public ResponseEntity<TaskResponse> create(
-            @AuthenticationPrincipal Jwt jwt,
-            @Valid @RequestBody TaskCreateRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(taskService.createTask(jwt.getSubject(), request));
+            @AuthenticationPrincipal Jwt jwt, @Valid @RequestBody TaskCreateRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(taskService.createTask(jwt.getSubject(), request));
     }
 
     @PutMapping("/{taskId}")
@@ -66,8 +64,7 @@ public class TaskController {
 
     @DeleteMapping("/{taskId}")
     public ResponseEntity<Void> delete(
-            @AuthenticationPrincipal Jwt jwt,
-            @PathVariable UUID taskId) {
+            @AuthenticationPrincipal Jwt jwt, @PathVariable UUID taskId) {
         taskService.deleteTask(jwt.getSubject(), taskId);
         return ResponseEntity.noContent().build();
     }

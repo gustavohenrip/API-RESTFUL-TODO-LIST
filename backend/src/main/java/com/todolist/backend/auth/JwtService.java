@@ -2,15 +2,14 @@ package com.todolist.backend.auth;
 
 import com.todolist.backend.config.JwtProperties;
 import com.todolist.backend.user.UserEntity;
+import java.time.Clock;
+import java.time.Instant;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
+import org.springframework.security.oauth2.jwt.JwsHeader;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
-import org.springframework.security.oauth2.jwt.JwsHeader;
 import org.springframework.stereotype.Service;
-
-import java.time.Clock;
-import java.time.Instant;
 
 @Service
 public class JwtService {
@@ -26,15 +25,16 @@ public class JwtService {
     }
 
     public String createToken(UserEntity user, Instant issuedAt, Instant expiresAt) {
-        JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuer(jwtProperties.getIssuer())
-                .subject(user.getUsername())
-                .issuedAt(issuedAt)
-                .expiresAt(expiresAt)
-                .claim("uid", user.getId().toString())
-                .claim("email", user.getEmail())
-                .claim("active", user.isActive())
-                .build();
+        JwtClaimsSet claims =
+                JwtClaimsSet.builder()
+                        .issuer(jwtProperties.getIssuer())
+                        .subject(user.getUsername())
+                        .issuedAt(issuedAt)
+                        .expiresAt(expiresAt)
+                        .claim("uid", user.getId().toString())
+                        .claim("email", user.getEmail())
+                        .claim("active", user.isActive())
+                        .build();
         JwsHeader header = JwsHeader.with(MacAlgorithm.HS256).build();
         return jwtEncoder.encode(JwtEncoderParameters.from(header, claims)).getTokenValue();
     }

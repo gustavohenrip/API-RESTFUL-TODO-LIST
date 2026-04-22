@@ -12,5 +12,4 @@ public record AuthResponse(
         Instant updatedAt,
         String accessToken,
         String tokenType,
-        Instant expiresAt) {
-}
+        Instant expiresAt) {}

@@ -1,7 +1,6 @@
 package com.todolist.backend.task.dto;
 
 import com.todolist.backend.task.TaskEntity;
-
 import java.time.Instant;
 import java.util.UUID;
 
@@ -20,7 +19,6 @@ public record TaskResponse(
                 task.getDescription(),
                 task.isCompleted(),
                 task.getCreatedAt(),
-                task.getUpdatedAt()
-        );
+                task.getUpdatedAt());
     }
 }

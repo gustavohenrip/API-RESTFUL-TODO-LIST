@@ -10,8 +10,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @ConfigurationPropertiesScan
 public class TodoBackendApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(TodoBackendApplication.class, args);
-	}
-
+    public static void main(String[] args) {
+        SpringApplication.run(TodoBackendApplication.class, args);
+    }
 }

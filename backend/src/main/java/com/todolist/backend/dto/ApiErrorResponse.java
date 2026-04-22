@@ -9,5 +9,4 @@ public record ApiErrorResponse(
         String error,
         String message,
         String path,
-        List<String> details) {
-}
+        List<String> details) {}

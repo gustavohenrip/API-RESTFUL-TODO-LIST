@@ -9,6 +9,11 @@ import com.nimbusds.jose.proc.SecurityContext;
 import com.todolist.backend.auth.LoginRateLimitFilter;
 import com.todolist.backend.dto.ApiErrorResponse;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.time.Clock;
+import java.time.Instant;
+import java.util.Arrays;
+import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -31,12 +36,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.io.IOException;
-import java.time.Clock;
-import java.time.Instant;
-import java.util.Arrays;
-import java.util.List;
-
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -48,22 +47,39 @@ public class SecurityConfig {
             CorsConfigurationSource corsConfigurationSource,
             AuthenticationEntryPoint authenticationEntryPoint,
             AccessDeniedHandler accessDeniedHandler,
-            LoginRateLimitFilter loginRateLimitFilter) throws Exception {
-        http
-                .csrf(csrf -> csrf.disable())
+            LoginRateLimitFilter loginRateLimitFilter)
+            throws Exception {
+        http.csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .exceptionHandling(exceptions -> exceptions
-                        .authenticationEntryPoint(authenticationEntryPoint)
-                        .accessDeniedHandler(accessDeniedHandler)
-                )
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/api/auth/register", "/api/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/actuator/health", "/actuator/info").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .anyRequest().authenticated()
-                )
+                .sessionManagement(
+                        session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(
+                        exceptions ->
+                                exceptions
+                                        .authenticationEntryPoint(authenticationEntryPoint)
+                                        .accessDeniedHandler(accessDeniedHandler))
+                .authorizeHttpRequests(
+                        auth ->
+                                auth.requestMatchers(
+                                                HttpMethod.POST,
+                                                "/api/auth/register",
+                                                "/api/auth/login")
+                                        .permitAll()
+                                        .requestMatchers(
+                                                HttpMethod.GET,
+                                                "/actuator/health",
+                                                "/actuator/info")
+                                        .permitAll()
+                                        .requestMatchers(
+                                                HttpMethod.GET,
+                                                "/v3/api-docs/**",
+                                                "/swagger-ui/**",
+                                                "/swagger-ui.html")
+                                        .permitAll()
+                                        .requestMatchers(HttpMethod.OPTIONS, "/**")
+                                        .permitAll()
+                                        .anyRequest()
+                                        .authenticated())
                 .addFilterBefore(loginRateLimitFilter, UsernamePasswordAuthenticationFilter.class)
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.decoder(jwtDecoder)));
         return http.build();
@@ -81,17 +97,19 @@ public class SecurityConfig {
 
     @Bean
     public JwtDecoder jwtDecoder(JwtProperties jwtProperties) {
-        NimbusJwtDecoder decoder = NimbusJwtDecoder.withSecretKey(jwtProperties.secretKey()).build();
+        NimbusJwtDecoder decoder =
+                NimbusJwtDecoder.withSecretKey(jwtProperties.secretKey()).build();
         decoder.setJwtValidator(JwtValidators.createDefaultWithIssuer(jwtProperties.getIssuer()));
         return decoder;
     }
 
     @Bean
     public JwtEncoder jwtEncoder(JwtProperties jwtProperties) {
-        OctetSequenceKey key = new OctetSequenceKey.Builder(jwtProperties.secretBytes())
-                .keyID("todo-jwt")
-                .algorithm(JWSAlgorithm.HS256)
-                .build();
+        OctetSequenceKey key =
+                new OctetSequenceKey.Builder(jwtProperties.secretBytes())
+                        .keyID("todo-jwt")
+                        .algorithm(JWSAlgorithm.HS256)
+                        .build();
         return new NimbusJwtEncoder(new ImmutableJWKSet<SecurityContext>(new JWKSet(key)));
     }
 
@@ -99,8 +117,10 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource(AppCorsProperties corsProperties) {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(parseOrigins(corsProperties.getAllowedOrigins()));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept", "X-Requested-With"));
+        configuration.setAllowedMethods(
+                List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(
+                List.of("Authorization", "Content-Type", "Accept", "X-Requested-With"));
         configuration.setExposedHeaders(List.of("Location"));
         configuration.setAllowCredentials(false);
         configuration.setMaxAge(3600L);
@@ -112,12 +132,24 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationEntryPoint authenticationEntryPoint(ObjectMapper objectMapper) {
-        return (request, response, authException) -> writeError(response, objectMapper, HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized", "Unauthorized");
+        return (request, response, authException) ->
+                writeError(
+                        response,
+                        objectMapper,
+                        HttpServletResponse.SC_UNAUTHORIZED,
+                        "Unauthorized",
+                        "Unauthorized");
     }
 
     @Bean
     public AccessDeniedHandler accessDeniedHandler(ObjectMapper objectMapper) {
-        return (request, response, accessDeniedException) -> writeError(response, objectMapper, HttpServletResponse.SC_FORBIDDEN, "Forbidden", "Forbidden");
+        return (request, response, accessDeniedException) ->
+                writeError(
+                        response,
+                        objectMapper,
+                        HttpServletResponse.SC_FORBIDDEN,
+                        "Forbidden",
+                        "Forbidden");
     }
 
     private List<String> parseOrigins(String allowedOrigins) {
@@ -127,16 +159,23 @@ public class SecurityConfig {
                 .toList();
     }
 
-    private void writeError(HttpServletResponse response, ObjectMapper objectMapper, int status, String error, String message) throws IOException {
+    private void writeError(
+            HttpServletResponse response,
+            ObjectMapper objectMapper,
+            int status,
+            String error,
+            String message)
+            throws IOException {
         response.setStatus(status);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        objectMapper.writeValue(response.getOutputStream(), new ApiErrorResponse(
-                Instant.now(),
-                status,
-                error,
-                message == null || message.isBlank() ? error : message,
-                null,
-                List.of()
-        ));
+        objectMapper.writeValue(
+                response.getOutputStream(),
+                new ApiErrorResponse(
+                        Instant.now(),
+                        status,
+                        error,
+                        message == null || message.isBlank() ? error : message,
+                        null,
+                        List.of()));
     }
 }

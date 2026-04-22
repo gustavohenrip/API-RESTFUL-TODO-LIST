@@ -1,7 +1,6 @@
 package com.todolist.backend.auth.dto;
 
 import com.todolist.backend.user.UserEntity;
-
 import java.time.Instant;
 import java.util.UUID;
 
@@ -20,7 +19,6 @@ public record UserResponse(
                 user.getEmail(),
                 user.isActive(),
                 user.getCreatedAt(),
-                user.getUpdatedAt()
-        );
+                user.getUpdatedAt());
     }
 }
