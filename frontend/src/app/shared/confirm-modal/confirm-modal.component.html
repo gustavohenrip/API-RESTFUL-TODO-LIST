@@ -1,0 +1,26 @@
+@if (confirmService.state(); as dialog) {
+  <div
+    class="modal-backdrop"
+    role="dialog"
+    aria-modal="true"
+    (click)="onBackdropClick($event)"
+  >
+    <div class="modal">
+      <h2>{{ dialog.options.title }}</h2>
+      <p>{{ dialog.options.message }}</p>
+      <div class="modal-actions">
+        <button class="ghost" type="button" (click)="confirmService.cancel()">
+          {{ dialog.options.cancelLabel }}
+        </button>
+        <button
+          class="primary"
+          [class.danger]="dialog.options.tone === 'danger'"
+          type="button"
+          (click)="confirmService.confirm()"
+        >
+          {{ dialog.options.confirmLabel }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

@@ -1,20 +1,21 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
+import { environment } from '../../environments/environment';
 import {
   AuthResponse,
   LoginPayload,
+  Page,
   RegisterPayload,
   Task,
   TaskCreatePayload,
   TaskUpdatePayload,
   User,
 } from './models';
-import { API_URL } from './app.tokens';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = inject(API_URL);
+  private readonly apiUrl = environment.apiUrl;
 
   register(payload: RegisterPayload) {
     return this.http.post<User>(this.url('/auth/register'), payload);
@@ -28,8 +29,18 @@ export class ApiService {
     return this.http.get<User>(this.url('/auth/me'));
   }
 
-  listTasks() {
-    return this.http.get<Task[]>(this.url('/tasks'));
+  listTasks(options: { completed?: boolean; page?: number; size?: number } = {}) {
+    let params = new HttpParams();
+    if (options.completed !== undefined) {
+      params = params.set('completed', String(options.completed));
+    }
+    if (options.page !== undefined) {
+      params = params.set('page', String(options.page));
+    }
+    if (options.size !== undefined) {
+      params = params.set('size', String(options.size));
+    }
+    return this.http.get<Page<Task>>(this.url('/tasks'), { params });
   }
 
   createTask(payload: TaskCreatePayload) {

@@ -1,0 +1,42 @@
+<section class="panel list">
+  <div class="filters" [style.--segment-index]="store.filterIndex()">
+    <button
+      type="button"
+      [class.active]="store.filter() === 'all'"
+      (click)="setFilter('all')"
+    >
+      All
+    </button>
+    <button
+      type="button"
+      [class.active]="store.filter() === 'open'"
+      (click)="setFilter('open')"
+    >
+      Open
+    </button>
+    <button
+      type="button"
+      [class.active]="store.filter() === 'done'"
+      (click)="setFilter('done')"
+    >
+      Done
+    </button>
+  </div>
+
+  @if (store.loading() && store.visibleTasks().length === 0) {
+    <div class="empty">Loading</div>
+  } @else if (store.visibleTasks().length === 0) {
+    <div class="empty">No tasks</div>
+  } @else {
+    <ul class="task-list">
+      @for (task of store.visibleTasks(); track task.id; let i = $index) {
+        <app-task-item
+          [task]="task"
+          [index]="i"
+          (edit)="edit.emit($event)"
+          (remove)="remove.emit($event)"
+        />
+      }
+    </ul>
+  }
+</section>

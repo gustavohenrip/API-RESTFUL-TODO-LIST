@@ -1,0 +1,32 @@
+<form class="panel editor" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+  <div class="editor-head">
+    <div>
+      <p class="eyebrow">Tasks</p>
+      <h1>{{ editing() ? 'Edit task' : 'New task' }}</h1>
+    </div>
+
+    @if (editing()) {
+      <button class="ghost" type="button" (click)="cancel()">Cancel</button>
+    }
+  </div>
+
+  <label class="field">
+    <span>Title</span>
+    <input type="text" formControlName="title" maxlength="120" />
+    @if (fieldError(form.controls.title, 'Title', { maxLength: 120 }); as message) {
+      <small>{{ message }}</small>
+    }
+  </label>
+
+  <label class="field">
+    <span>Description</span>
+    <textarea formControlName="description" rows="3"></textarea>
+    @if (fieldError(form.controls.description, 'Description', { maxLength: 1000 }); as message) {
+      <small>{{ message }}</small>
+    }
+  </label>
+
+  <button class="primary" type="submit" [disabled]="submitting()">
+    {{ editing() ? 'Save' : 'Add' }}
+  </button>
+</form>

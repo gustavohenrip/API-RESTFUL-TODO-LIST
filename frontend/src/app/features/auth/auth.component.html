@@ -1,0 +1,68 @@
+<section class="panel auth-panel">
+  <div class="switch" [style.--segment-index]="authIndex()">
+    <button
+      type="button"
+      [class.active]="mode() === 'login'"
+      (click)="switchMode('login')"
+    >
+      Sign in
+    </button>
+    <button
+      type="button"
+      [class.active]="mode() === 'register'"
+      (click)="switchMode('register')"
+    >
+      Register
+    </button>
+  </div>
+
+  @if (mode() === 'login') {
+    <form class="form" [formGroup]="loginForm" (ngSubmit)="submit()" novalidate>
+      <label class="field">
+        <span>Username</span>
+        <input type="text" formControlName="username" autocomplete="username" />
+        @if (fieldError(loginForm.controls.username, 'Username', { minLength: 3, maxLength: 32 }); as message) {
+          <small>{{ message }}</small>
+        }
+      </label>
+
+      <label class="field">
+        <span>Password</span>
+        <input type="password" formControlName="password" autocomplete="current-password" />
+        @if (fieldError(loginForm.controls.password, 'Password', { minLength: 8, maxLength: 72 }); as message) {
+          <small>{{ message }}</small>
+        }
+      </label>
+
+      <button class="primary" type="submit" [disabled]="busy()">Sign in</button>
+    </form>
+  } @else {
+    <form class="form" [formGroup]="registerForm" (ngSubmit)="submit()" novalidate>
+      <label class="field">
+        <span>Username</span>
+        <input type="text" formControlName="username" autocomplete="username" />
+        @if (fieldError(registerForm.controls.username, 'Username', { minLength: 3, maxLength: 32 }); as message) {
+          <small>{{ message }}</small>
+        }
+      </label>
+
+      <label class="field">
+        <span>Email</span>
+        <input type="email" formControlName="email" autocomplete="email" />
+        @if (fieldError(registerForm.controls.email, 'Email', { email: true, maxLength: 120 }); as message) {
+          <small>{{ message }}</small>
+        }
+      </label>
+
+      <label class="field">
+        <span>Password</span>
+        <input type="password" formControlName="password" autocomplete="new-password" />
+        @if (fieldError(registerForm.controls.password, 'Password', { minLength: 8, maxLength: 72 }); as message) {
+          <small>{{ message }}</small>
+        }
+      </label>
+
+      <button class="primary" type="submit" [disabled]="busy()">Register</button>
+    </form>
+  }
+</section>

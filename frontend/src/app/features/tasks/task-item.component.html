@@ -1,0 +1,39 @@
+<li class="task" [class.done]="task().completed" [style.--task-index]="index()">
+  <label class="check">
+    <input
+      type="checkbox"
+      [checked]="task().completed"
+      [disabled]="store.isBusy(task().id)"
+      (change)="toggle()"
+    />
+    <span></span>
+  </label>
+
+  <button class="task-main" type="button" (click)="edit.emit(task())">
+    <strong>{{ task().title }}</strong>
+    @if (task().description) {
+      <span>{{ task().description }}</span>
+    }
+  </button>
+
+  <div class="task-actions">
+    <button
+      class="icon"
+      type="button"
+      [disabled]="store.isBusy(task().id)"
+      (click)="edit.emit(task())"
+      aria-label="Edit task"
+    >
+      ✎
+    </button>
+    <button
+      class="icon danger"
+      type="button"
+      [disabled]="store.isBusy(task().id)"
+      (click)="remove.emit(task())"
+      aria-label="Delete task"
+    >
+      ×
+    </button>
+  </div>
+</li>
