@@ -1,5 +1,7 @@
 package com.todolist.backend.config;
 
+import com.todolist.backend.common.exception.BadRequestException;
+import jakarta.annotation.PostConstruct;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -15,6 +17,8 @@ import java.util.Base64;
 @ConfigurationProperties(prefix = "app.jwt")
 public class JwtProperties {
 
+    private static final int MIN_SECRET_BYTES = 32;
+
     @NotBlank
     private String issuer;
 
@@ -23,6 +27,20 @@ public class JwtProperties {
 
     @Min(5)
     private long expirationMinutes;
+
+    private byte[] decodedSecret;
+
+    @PostConstruct
+    void verifySecret() {
+        try {
+            decodedSecret = Base64.getDecoder().decode(secret.trim().getBytes(StandardCharsets.UTF_8));
+        } catch (IllegalArgumentException ex) {
+            throw new BadRequestException("app.jwt.secret must be a valid Base64 string");
+        }
+        if (decodedSecret.length < MIN_SECRET_BYTES) {
+            throw new BadRequestException("app.jwt.secret must decode to at least " + MIN_SECRET_BYTES + " bytes");
+        }
+    }
 
     public String getIssuer() {
         return issuer;
@@ -53,10 +71,10 @@ public class JwtProperties {
     }
 
     public byte[] secretBytes() {
-        return Base64.getDecoder().decode(secret.trim().getBytes(StandardCharsets.UTF_8));
+        return decodedSecret.clone();
     }
 
     public SecretKey secretKey() {
-        return new SecretKeySpec(secretBytes(), "HmacSHA256");
+        return new SecretKeySpec(decodedSecret, "HmacSHA256");
     }
 }

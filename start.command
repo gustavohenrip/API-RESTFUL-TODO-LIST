@@ -5,6 +5,13 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 BACKEND_DIR="$SCRIPT_DIR/backend"
 FRONTEND_DIR="$SCRIPT_DIR/frontend"
 STATE_DIR="$SCRIPT_DIR/.run-state"
+
+if [[ -f "$SCRIPT_DIR/.env" ]]; then
+  set -a
+  # shellcheck disable=SC1091
+  source "$SCRIPT_DIR/.env"
+  set +a
+fi
 BACKEND_PID_FILE="$STATE_DIR/backend.pid"
 FRONTEND_PID_FILE="$STATE_DIR/frontend.pid"
 
