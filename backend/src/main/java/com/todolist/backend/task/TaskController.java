@@ -4,6 +4,10 @@ import com.todolist.backend.task.dto.TaskCreateRequest;
 import com.todolist.backend.task.dto.TaskResponse;
 import com.todolist.backend.task.dto.TaskUpdateRequest;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -32,10 +35,11 @@ public class TaskController {
     }
 
     @GetMapping
-    public List<TaskResponse> list(
+    public Page<TaskResponse> list(
             @AuthenticationPrincipal Jwt jwt,
-            @RequestParam(required = false) Boolean completed) {
-        return taskService.listTasks(jwt.getSubject(), completed);
+            @RequestParam(required = false) Boolean completed,
+            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        return taskService.listTasks(jwt.getSubject(), completed, pageable);
     }
 
     @GetMapping("/{taskId}")

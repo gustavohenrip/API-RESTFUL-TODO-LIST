@@ -1,6 +1,5 @@
 package com.todolist.backend.task;
 
-import com.todolist.backend.auth.dto.UserResponse;
 import com.todolist.backend.common.exception.BadRequestException;
 import com.todolist.backend.common.exception.ResourceNotFoundException;
 import com.todolist.backend.common.exception.UnauthorizedException;
@@ -9,10 +8,11 @@ import com.todolist.backend.task.dto.TaskResponse;
 import com.todolist.backend.task.dto.TaskUpdateRequest;
 import com.todolist.backend.user.UserEntity;
 import com.todolist.backend.user.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -28,12 +28,12 @@ public class TaskService {
     }
 
     @Transactional(readOnly = true)
-    public List<TaskResponse> listTasks(String username, Boolean completed) {
+    public Page<TaskResponse> listTasks(String username, Boolean completed, Pageable pageable) {
         UserEntity user = requireUser(username);
-        List<TaskEntity> tasks = completed == null
-                ? taskRepository.findAllByOwnerIdOrderByCreatedAtDesc(user.getId())
-                : taskRepository.findAllByOwnerIdAndCompletedOrderByCreatedAtDesc(user.getId(), completed);
-        return tasks.stream().map(TaskResponse::from).toList();
+        Page<TaskEntity> page = completed == null
+                ? taskRepository.findAllByOwnerId(user.getId(), pageable)
+                : taskRepository.findAllByOwnerIdAndCompleted(user.getId(), completed, pageable);
+        return page.map(TaskResponse::from);
     }
 
     @Transactional(readOnly = true)
@@ -70,7 +70,7 @@ public class TaskService {
             task.setCompleted(request.completed());
         }
 
-        return TaskResponse.from(taskRepository.save(task));
+        return TaskResponse.from(task);
     }
 
     @Transactional

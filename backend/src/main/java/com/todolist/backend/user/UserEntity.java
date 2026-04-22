@@ -1,14 +1,11 @@
 package com.todolist.backend.user;
 
-import com.todolist.backend.task.TaskEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import org.hibernate.annotations.UuidGenerator;
 import org.springframework.data.annotation.CreatedDate;
@@ -16,8 +13,6 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -55,9 +50,6 @@ public class UserEntity {
     @LastModifiedDate
     @Column(nullable = false)
     private Instant updatedAt;
-
-    @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY)
-    private Set<TaskEntity> tasks = new HashSet<>();
 
     public UUID getId() {
         return id;
@@ -113,13 +105,5 @@ public class UserEntity {
 
     public void setUpdatedAt(Instant updatedAt) {
         this.updatedAt = updatedAt;
-    }
-
-    public Set<TaskEntity> getTasks() {
-        return tasks;
-    }
-
-    public void setTasks(Set<TaskEntity> tasks) {
-        this.tasks = tasks;
     }
 }
