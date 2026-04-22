@@ -4,6 +4,9 @@
 *.iml
 *.log
 
+memory.md
+frontend/README.md
+
 backend/target/
 backend/data/
 backend/.mvn/wrapper/maven-wrapper.jar
