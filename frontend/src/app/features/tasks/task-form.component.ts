@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { fieldError } from '../../shared/field-error';
 import { TasksStore } from './tasks.store';
@@ -48,7 +55,11 @@ export class TaskFormComponent {
     try {
       let ok = false;
       if (editing) {
-        ok = await this.store.save(editing.id, { title, description, completed: editing.completed });
+        ok = await this.store.save(editing.id, {
+          title,
+          description,
+          completed: editing.completed,
+        });
       } else {
         ok = await this.store.create({ title, description });
       }

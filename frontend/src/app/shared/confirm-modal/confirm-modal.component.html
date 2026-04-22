@@ -1,10 +1,5 @@
 @if (confirmService.state(); as dialog) {
-  <div
-    class="modal-backdrop"
-    role="dialog"
-    aria-modal="true"
-    (click)="onBackdropClick($event)"
-  >
+  <div class="modal-backdrop" role="dialog" aria-modal="true" (click)="onBackdropClick($event)">
     <div class="modal">
       <h2>{{ dialog.options.title }}</h2>
       <p>{{ dialog.options.message }}</p>

@@ -1,8 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import {
-  HttpTestingController,
-  provideHttpClientTesting,
-} from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { ApiService } from './api.service';
 import { environment } from '../../environments/environment';
@@ -26,9 +23,7 @@ describe('ApiService', () => {
   it('sends pagination params for listTasks', () => {
     service.listTasks({ completed: true, page: 1, size: 10 }).subscribe();
 
-    const req = httpMock.expectOne(
-      (request) => request.url === `${environment.apiUrl}/tasks`,
-    );
+    const req = httpMock.expectOne((request) => request.url === `${environment.apiUrl}/tasks`);
     expect(req.request.params.get('completed')).toBe('true');
     expect(req.request.params.get('page')).toBe('1');
     expect(req.request.params.get('size')).toBe('10');

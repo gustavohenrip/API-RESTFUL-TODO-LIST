@@ -1,24 +1,12 @@
 <section class="panel list">
   <div class="filters" [style.--segment-index]="store.filterIndex()">
-    <button
-      type="button"
-      [class.active]="store.filter() === 'all'"
-      (click)="setFilter('all')"
-    >
+    <button type="button" [class.active]="store.filter() === 'all'" (click)="setFilter('all')">
       All
     </button>
-    <button
-      type="button"
-      [class.active]="store.filter() === 'open'"
-      (click)="setFilter('open')"
-    >
+    <button type="button" [class.active]="store.filter() === 'open'" (click)="setFilter('open')">
       Open
     </button>
-    <button
-      type="button"
-      [class.active]="store.filter() === 'done'"
-      (click)="setFilter('done')"
-    >
+    <button type="button" [class.active]="store.filter() === 'done'" (click)="setFilter('done')">
       Done
     </button>
   </div>

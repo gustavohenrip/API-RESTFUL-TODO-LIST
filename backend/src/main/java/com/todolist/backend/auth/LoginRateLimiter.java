@@ -28,7 +28,8 @@ public class LoginRateLimiter {
         int capacity = login.getCapacity();
         Duration refillPeriod = Duration.ofMinutes(login.getRefillMinutes());
         return Bucket.builder()
-                .addLimit(limit -> limit.capacity(capacity).refillIntervally(capacity, refillPeriod))
+                .addLimit(
+                        limit -> limit.capacity(capacity).refillIntervally(capacity, refillPeriod))
                 .build();
     }
 }
